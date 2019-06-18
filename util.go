@@ -16,22 +16,7 @@ func debugPrintTokens(tokens []*Token) {
 	debug("==== tokens ====")
 
 	for _, token := range tokens {
-		switch token.ty {
-		case tkNum:
-			debug("token -> ty: tkNum, val: %d", token.val)
-		case tkAdd:
-			debug("token -> ty: tkAdd, val: %d", token.val)
-		case tkSub:
-			debug("token -> ty: tkSub, val: %d", token.val)
-		case tkMul:
-			debug("token -> ty: tkMul, val: %d", token.val)
-		case tkDiv:
-			debug("token -> ty: tkDiv, val: %d", token.val)
-		case tkEnd:
-			debug("token -> ty: tkEnd, val: EOF")
-		default:
-			debug("token -> unsupported token type. (token.ty: %d)", token.ty)
-		}
+		debug("type => \"%s\", val => %d", token.name, token.val)
 	}
 
 	debug("================")
@@ -51,8 +36,8 @@ func debugPrintNode(node *Node, depth int) {
 	}
 
 	format := strings.Repeat("\t", depth)
-	format += "%d"
-	debug(format, node.ty)
+	format += "%s"
+	debug(format, node.name)
 
 	debugPrintNode(node.lhs, depth+1)
 	debugPrintNode(node.rhs, depth+1)

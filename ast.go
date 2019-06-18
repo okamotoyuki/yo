@@ -1,10 +1,11 @@
 package main
 
 type Node struct {
-	ty  int
-	lhs *Node
-	rhs *Node
-	val int
+	ty   int
+	name string
+	lhs  *Node
+	rhs  *Node
+	val  int
 }
 
 const (
@@ -18,7 +19,7 @@ const (
 // term = num
 func term(tokens []*Token, pos int) (*Node, int) {
 	if next := consume(tokens, pos, tkNum); next > pos {
-		return &Node{nodeNum, nil, nil, tokens[pos].val}, next
+		return &Node{nodeNum, "number", nil, nil, tokens[pos].val}, next
 	}
 
 	exitWithError("unexpected token in this context. (token.ty: %d)", tokens[pos].ty)
@@ -34,10 +35,10 @@ func mul(tokens []*Token, pos int) (*Node, int) {
 	for {
 		if next := consume(tokens, pos, tkMul); next > pos {
 			rhs, pos = term(tokens, next)
-			node = &Node{nodeMul, node, rhs, 0}
+			node = &Node{nodeMul, "mul", node, rhs, 0}
 		} else if next := consume(tokens, pos, tkDiv); next > pos {
 			rhs, pos = term(tokens, next)
-			node = &Node{nodeDiv, node, rhs, 0}
+			node = &Node{nodeDiv, "div", node, rhs, 0}
 		} else {
 			break
 		}
@@ -55,10 +56,10 @@ func expr(tokens []*Token, pos int) (*Node, int) {
 	for {
 		if next := consume(tokens, pos, tkAdd); next > pos {
 			rhs, pos = term(tokens, next)
-			node = &Node{nodeAdd, node, rhs, 0}
+			node = &Node{nodeAdd, "add", node, rhs, 0}
 		} else if next := consume(tokens, pos, tkSub); next > pos {
 			rhs, pos = term(tokens, next)
-			node = &Node{nodeSub, node, rhs, 0}
+			node = &Node{nodeSub, "sub", node, rhs, 0}
 		} else {
 			break
 		}
