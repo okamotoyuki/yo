@@ -5,7 +5,7 @@ TARGET = yo
 all: $(TARGET)
 
 $(TARGET):
-	$(GO) build
+	$(GO) build -a
 
 .PHONY:	test
 test: yo
