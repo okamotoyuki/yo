@@ -67,10 +67,19 @@ func tokenize(source string) []*Token {
 		start = -1
 	}
 
-	token := Token{tkEnd, -1, ""}
+	token := Token{tkEnd, 0, ""}
 	tokens = append(tokens, &token)
 
 	debugPrintTokens(tokens)
 
 	return tokens
+}
+
+// consume token if the input is expected one
+func consume(tokens []*Token, pos int, ty int) int {
+	if tokens[pos].ty != ty {
+		return pos
+	}
+	pos++
+	return pos
 }

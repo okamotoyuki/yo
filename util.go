@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func debug(format string, args ...interface{}) {
@@ -33,15 +34,26 @@ func debugPrintTokens(tokens []*Token) {
 		}
 	}
 
-	debug("================\n")
+	debug("================")
+	println()
 }
 
-func printAsmLine(inst string, format string, args ...interface{}) {
-	fmt.Printf("\t"+inst+"\t"+format+"\n", args...)
+func debugPrintAst(ast *Node) {
+	debug("===== ast =====")
+	debugPrintNode(ast, 0)
+	debug("===============")
+	println()
 }
 
-func printAsmHeader() {
-	fmt.Println("#include \"textflag.h\"")
-	fmt.Println()
-	fmt.Println("TEXT ·run(SB), NOSPLIT, $0")
+func debugPrintNode(node *Node, depth int) {
+	if node == nil {
+		return
+	}
+
+	format := strings.Repeat("\t", depth)
+	format += "%d"
+	debug(format, node.ty)
+
+	debugPrintNode(node.lhs, depth+1)
+	debugPrintNode(node.rhs, depth+1)
 }
