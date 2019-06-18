@@ -5,17 +5,12 @@ import (
 )
 
 const (
-	tkNum = iota
-	tkAdd
-	tkSub
-	tkMul
-	tkDiv
-	tkEnd
+	tkNum = 256
+	tkEOF = -1
 )
 
 type Token struct {
 	ty    int
-	name  string
 	val   int
 	input string
 }
@@ -30,25 +25,25 @@ func tokenize(source string) []*Token {
 			if start >= 0 {
 				input := source[start:pos]
 				val, _ := strconv.Atoi(input)
-				token := Token{tkNum, "number", val, input}
+				token := Token{tkNum, val, input}
 				tokens = append(tokens, &token)
 			}
 			start = -1
 			continue
 		case '+':
-			token := Token{tkAdd, "add", tkAdd, string(r)}
+			token := Token{'+', '+', string(r)}
 			tokens = append(tokens, &token)
 			start = -1
 		case '-':
-			token := Token{tkSub, "sub", tkSub, string(r)}
+			token := Token{'-', '-', string(r)}
 			tokens = append(tokens, &token)
 			start = -1
 		case '*':
-			token := Token{tkMul, "mul", tkMul, string(r)}
+			token := Token{'*', '*', string(r)}
 			tokens = append(tokens, &token)
 			start = -1
 		case '/':
-			token := Token{tkDiv, "div", tkDiv, string(r)}
+			token := Token{'/', '/', string(r)}
 			tokens = append(tokens, &token)
 			start = -1
 		default:
@@ -63,16 +58,13 @@ func tokenize(source string) []*Token {
 	if start >= 0 {
 		input := source[start:]
 		val, _ := strconv.Atoi(input)
-		token := Token{tkNum, "number", val, input}
+		token := Token{tkNum, val, input}
 		tokens = append(tokens, &token)
 		start = -1
 	}
 
-	token := Token{tkEnd, "end", 0, ""}
+	token := Token{tkEOF, 0, ""}
 	tokens = append(tokens, &token)
-
-	debugPrintTokens(tokens)
-
 	return tokens
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -13,21 +14,32 @@ func debug(format string, args ...interface{}) {
 }
 
 func debugPrintTokens(tokens []*Token) {
-	debug("==== tokens ====")
+	if isDebug {
+		str := "tokens => [ "
 
-	for _, token := range tokens {
-		debug("type => \"%s\", val => %d", token.name, token.val)
+		for _, token := range tokens {
+			switch token.ty {
+			case tkNum:
+				str += strconv.Itoa(token.val) + ", "
+			case tkEOF:
+				str += "EOF"
+			default:
+				str += string(token.ty) + ", "
+			}
+		}
+		str += " ]"
+		debug(str)
+		println()
 	}
-
-	debug("================")
-	println()
 }
 
 func debugPrintAst(ast *Node) {
-	debug("===== ast =====")
-	debugPrintNode(ast, 0)
-	debug("===============")
-	println()
+	if isDebug {
+		debug("===== ast =====")
+		debugPrintNode(ast, 0)
+		debug("===============")
+		println()
+	}
 }
 
 func debugPrintNode(node *Node, depth int) {
@@ -35,9 +47,9 @@ func debugPrintNode(node *Node, depth int) {
 		return
 	}
 
-	format := strings.Repeat("\t", depth)
-	format += "%s"
-	debug(format, node.name)
+	format := "\t" + strings.Repeat("\t", depth)
+	format += node.name
+	_, _ = fmt.Fprintln(os.Stderr, format)
 
 	debugPrintNode(node.lhs, depth+1)
 	debugPrintNode(node.rhs, depth+1)

@@ -33,10 +33,10 @@ func mul(tokens []*Token, pos int) (*Node, int) {
 	var rhs *Node
 
 	for {
-		if next := consume(tokens, pos, tkMul); next > pos {
+		if next := consume(tokens, pos, '*'); next > pos {
 			rhs, pos = term(tokens, next)
 			node = &Node{nodeMul, "mul", node, rhs, 0}
-		} else if next := consume(tokens, pos, tkDiv); next > pos {
+		} else if next := consume(tokens, pos, '/'); next > pos {
 			rhs, pos = term(tokens, next)
 			node = &Node{nodeDiv, "div", node, rhs, 0}
 		} else {
@@ -54,10 +54,10 @@ func expr(tokens []*Token, pos int) (*Node, int) {
 	var rhs *Node
 
 	for {
-		if next := consume(tokens, pos, tkAdd); next > pos {
+		if next := consume(tokens, pos, '+'); next > pos {
 			rhs, pos = term(tokens, next)
 			node = &Node{nodeAdd, "add", node, rhs, 0}
-		} else if next := consume(tokens, pos, tkSub); next > pos {
+		} else if next := consume(tokens, pos, '-'); next > pos {
 			rhs, pos = term(tokens, next)
 			node = &Node{nodeSub, "sub", node, rhs, 0}
 		} else {
