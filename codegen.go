@@ -5,6 +5,10 @@ import (
 )
 
 func printAsmLine(inst string, format string, args ...interface{}) {
+	if format == "" {
+		fmt.Println("\t" + inst)
+		return
+	}
 	fmt.Printf("\t"+inst+"\t"+format+"\n", args...)
 }
 
@@ -50,6 +54,11 @@ func visit(node *Node) {
 		printAsmLine("ADDQ", "DI, AX")
 	case nodeSub:
 		printAsmLine("SUBQ", "DI, AX")
+	case nodeMul:
+		printAsmLine("MULQ", "DI")
+	case nodeDiv:
+		printAsmLine("CQO", "")
+		printAsmLine("DIVQ", "DI")
 	default:
 		exitWithError("unexpected node in this context. (node.ty: %d)", node.ty)
 	}

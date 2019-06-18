@@ -63,7 +63,7 @@ func tokenize(source string) []*Token {
 	if start >= 0 {
 		input := source[start:]
 		val, _ := strconv.Atoi(input)
-		token := Token{tkNum, "num", val, input}
+		token := Token{tkNum, "number", val, input}
 		tokens = append(tokens, &token)
 		start = -1
 	}
