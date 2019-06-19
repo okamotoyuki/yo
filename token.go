@@ -19,18 +19,38 @@ func tokenize(source string) []*Token {
 	tokens := []*Token{}
 	start := -1 // start index of token buffer
 
-	for pos, r := range source {
+	var pos int
+	var r rune
+
+	// check if token buffer is empty
+	bufferIsEmpty := func() bool {
+		return start < 0
+	}
+
+	// flush token buffer
+	flushBuffer := func() string {
+		str := source[start:pos]
+		start = -1
+		return str
+	}
+
+	for pos, r = range source {
 		switch r {
 		case ' ':
-			if start >= 0 {
-				input := source[start:pos]
+			if !bufferIsEmpty() {
+				input := flushBuffer()
 				val, _ := strconv.Atoi(input)
 				token := Token{tkNum, val, input}
 				tokens = append(tokens, &token)
 			}
-			start = -1
 			continue
 		case '+', '-', '*', '/', '(', ')':
+			if !bufferIsEmpty() {
+				input := flushBuffer()
+				val, _ := strconv.Atoi(input)
+				token := Token{tkNum, val, input}
+				tokens = append(tokens, &token)
+			}
 			token := Token{int(r), int(r), string(r)}
 			tokens = append(tokens, &token)
 			start = -1
