@@ -25,10 +25,7 @@ func printAsmFooter() {
 
 func printAsmBody(ast *Node) {
 	visit(ast)
-
-	if ast.ty == nodeNum {
-		printAsmLine("POPQ", "AX")
-	}
+	printAsmLine("POPQ", "AX")
 }
 
 func generateCode(ast *Node) {
@@ -52,13 +49,17 @@ func visit(node *Node) {
 	switch node.ty {
 	case nodeAdd:
 		printAsmLine("ADDQ", "DI, AX")
+		printAsmLine("PUSHQ", "AX")
 	case nodeSub:
 		printAsmLine("SUBQ", "DI, AX")
+		printAsmLine("PUSHQ", "AX")
 	case nodeMul:
 		printAsmLine("MULQ", "DI")
+		printAsmLine("PUSHQ", "AX")
 	case nodeDiv:
 		printAsmLine("CQO", "")
 		printAsmLine("DIVQ", "DI")
+		printAsmLine("PUSHQ", "AX")
 	default:
 		exitWithError("unexpected node in this context. (node.ty: %d)", node.ty)
 	}

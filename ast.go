@@ -55,10 +55,10 @@ func expr(tokens []*Token, pos int) (*Node, int) {
 
 	for {
 		if next := consume(tokens, pos, '+'); next > pos {
-			rhs, pos = term(tokens, next)
+			rhs, pos = mul(tokens, next)
 			node = &Node{nodeAdd, "add", node, rhs, 0}
 		} else if next := consume(tokens, pos, '-'); next > pos {
-			rhs, pos = term(tokens, next)
+			rhs, pos = mul(tokens, next)
 			node = &Node{nodeSub, "sub", node, rhs, 0}
 		} else {
 			break

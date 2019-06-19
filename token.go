@@ -30,20 +30,8 @@ func tokenize(source string) []*Token {
 			}
 			start = -1
 			continue
-		case '+':
-			token := Token{'+', '+', string(r)}
-			tokens = append(tokens, &token)
-			start = -1
-		case '-':
-			token := Token{'-', '-', string(r)}
-			tokens = append(tokens, &token)
-			start = -1
-		case '*':
-			token := Token{'*', '*', string(r)}
-			tokens = append(tokens, &token)
-			start = -1
-		case '/':
-			token := Token{'/', '/', string(r)}
+		case '+', '-', '*', '/', '(', ')':
+			token := Token{int(r), int(r), string(r)}
 			tokens = append(tokens, &token)
 			start = -1
 		default:
