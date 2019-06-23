@@ -15,7 +15,7 @@ func printAsmLine(inst string, format string, args ...interface{}) {
 func printAsmHeader() {
 	fmt.Println("#include \"textflag.h\"")
 	fmt.Println()
-	fmt.Println("TEXT ·run(SB), NOSPLIT, $0")
+	fmt.Println("TEXT ·__main(SB), NOSPLIT, $0")
 }
 
 func printAsmFooter() {
