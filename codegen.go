@@ -60,7 +60,15 @@ func visit(node *Node) {
 		printAsmLine("CQO", "")
 		printAsmLine("DIVQ", "DI")
 		printAsmLine("PUSHQ", "AX")
+	case nodeEq:
+		printAsmLine("CMPQ", "DI, AX")
+		printAsmLine("SETEQ", "AX")
+		printAsmLine("PUSHQ", "AX")
+	case nodeNe:
+		printAsmLine("CMPQ", "DI, AX")
+		printAsmLine("SETNE", "AX")
+		printAsmLine("PUSHQ", "AX")
 	default:
-		exitWithError("unexpected node in this context. (node.ty: %d)", node.ty)
+		exitWithError("unexpected node in this context. (node.name: %s)", node.name)
 	}
 }

@@ -21,6 +21,10 @@ func debugPrintTokens(tokens []*Token) {
 			switch token.ty {
 			case tkNum:
 				str += strconv.Itoa(token.val) + ", "
+			case tkEq:
+				str += "==, "
+			case tkNe:
+				str += "!=, "
 			case tkEOF:
 				str += "EOF"
 			default:

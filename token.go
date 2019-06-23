@@ -5,7 +5,11 @@ import (
 )
 
 const (
-	tkNum = 256
+	tkNum = 256 + iota
+	tkEq
+	tkNe
+	tkLe
+	tkGe
 	tkEOF = -1
 )
 
@@ -34,7 +38,9 @@ func tokenize(source string) []*Token {
 		return str
 	}
 
-	for pos, r = range source {
+	for pos = 0; pos < len(source); pos++ {
+		r = rune(source[pos])
+
 		switch r {
 		case ' ':
 			if !bufferIsEmpty() {
@@ -54,6 +60,28 @@ func tokenize(source string) []*Token {
 			token := Token{int(r), int(r), string(r)}
 			tokens = append(tokens, &token)
 			start = -1
+		case '=', '!':
+			if !bufferIsEmpty() {
+				input := flushBuffer()
+				val, _ := strconv.Atoi(input)
+				token := Token{tkNum, val, input}
+				tokens = append(tokens, &token)
+			}
+			if source[pos+1] == '=' {
+				var token Token
+				if r == '=' {
+					token = Token{tkEq, 0, "=="}
+				} else {
+
+					token = Token{tkNe, 0, "!="}
+				}
+				tokens = append(tokens, &token)
+				start = -1
+				pos++
+				continue
+			}
+			exitWithError("unexpected character in this context. ('%s', %d)", string(source[pos+1]), pos+1)
+		case '<', '>':
 		default:
 			if start < 0 {
 				start = pos
