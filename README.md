@@ -4,13 +4,11 @@ Yo is a tiny compiler for Go programing language.
 ## Build & Test
 * Build source
     ```$xslt
-    $ cd yo
-    $ make
+    $ go build
     ```
 * Run Test
     ```$xslt
-    $ cd yo
-    $ make test
+    $ ./test.sh
     ```
     
 ## Contributing
