@@ -59,7 +59,6 @@ func tokenize(source string) []*Token {
 			}
 			token := Token{int(r), int(r), string(r)}
 			tokens = append(tokens, &token)
-			start = -1
 		case '=', '!':
 			if !bufferIsEmpty() {
 				input := flushBuffer()
@@ -72,16 +71,34 @@ func tokenize(source string) []*Token {
 				if r == '=' {
 					token = Token{tkEq, 0, "=="}
 				} else {
-
 					token = Token{tkNe, 0, "!="}
 				}
 				tokens = append(tokens, &token)
-				start = -1
 				pos++
 				continue
 			}
 			exitWithError("unexpected character in this context. ('%s', %d)", string(source[pos+1]), pos+1)
 		case '<', '>':
+			var token Token
+			if !bufferIsEmpty() {
+				input := flushBuffer()
+				val, _ := strconv.Atoi(input)
+				token := Token{tkNum, val, input}
+				tokens = append(tokens, &token)
+			}
+			if source[pos+1] == '=' {
+				if r == '<' {
+					token = Token{tkLe, 0, "<="}
+				} else {
+
+					token = Token{tkGe, 0, ">="}
+				}
+				tokens = append(tokens, &token)
+				pos++
+				continue
+			}
+			token = Token{int(r), int(r), string(r)}
+			tokens = append(tokens, &token)
 		default:
 			if start < 0 {
 				start = pos
@@ -91,12 +108,11 @@ func tokenize(source string) []*Token {
 	}
 
 	// if any string is stored in the token buffer, create a token from that
-	if start >= 0 {
-		input := source[start:]
+	if !bufferIsEmpty() {
+		input := flushBuffer()
 		val, _ := strconv.Atoi(input)
 		token := Token{tkNum, val, input}
 		tokens = append(tokens, &token)
-		start = -1
 	}
 
 	token := Token{tkEOF, 0, ""}

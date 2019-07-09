@@ -25,6 +25,10 @@ func debugPrintTokens(tokens []*Token) {
 				str += "==, "
 			case tkNe:
 				str += "!=, "
+			case tkLe:
+				str += "<=, "
+			case tkGe:
+				str += ">=, "
 			case tkEOF:
 				str += "EOF"
 			default:

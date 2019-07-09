@@ -16,6 +16,8 @@ const (
 	nodeDiv
 	nodeEq
 	nodeNe
+	nodeLt
+	nodeLe
 )
 
 // term = "(" expr ")" | number
@@ -51,70 +53,92 @@ func unary(tokens []*Token, pos int) (*Node, int) {
 
 // mul  = unary ("*" unary | "/" unary)*
 func mul(tokens []*Token, pos int) (*Node, int) {
-	node, pos := unary(tokens, pos)
+	lhs, pos := unary(tokens, pos)
 
 	var rhs *Node
 
 	for {
 		if next := consume(tokens, pos, '*'); next > pos {
 			rhs, pos = unary(tokens, next)
-			node = &Node{nodeMul, "mul", node, rhs, 0}
+			lhs = &Node{nodeMul, "mul", lhs, rhs, 0}
 		} else if next = consume(tokens, pos, '/'); next > pos {
 			rhs, pos = unary(tokens, next)
-			node = &Node{nodeDiv, "div", node, rhs, 0}
+			lhs = &Node{nodeDiv, "div", lhs, rhs, 0}
 		} else {
 			break
 		}
 	}
 
-	return node, pos
+	return lhs, pos
 }
 
 // add = mul ("+" mul | "-" mul)*
 func add(tokens []*Token, pos int) (*Node, int) {
-	node, pos := mul(tokens, pos)
+	lhs, pos := mul(tokens, pos)
 
 	var rhs *Node
 
 	for {
 		if next := consume(tokens, pos, '+'); next > pos {
 			rhs, pos = mul(tokens, next)
-			node = &Node{nodeAdd, "add", node, rhs, 0}
+			lhs = &Node{nodeAdd, "add", lhs, rhs, 0}
 		} else if next := consume(tokens, pos, '-'); next > pos {
 			rhs, pos = mul(tokens, next)
-			node = &Node{nodeSub, "sub", node, rhs, 0}
+			lhs = &Node{nodeSub, "sub", lhs, rhs, 0}
 		} else {
 			break
 		}
 	}
 
-	return node, pos
+	return lhs, pos
 }
 
 // relational = add ("<" add | "<=" add | ">" add | ">=" add)*
 func relational(tokens []*Token, pos int) (*Node, int) {
-	return add(tokens, pos)
+	lhs, pos := add(tokens, pos)
+
+	var rhs *Node
+
+	for {
+		if next := consume(tokens, pos, '<'); next > pos {
+			rhs, pos = add(tokens, next)
+			lhs = &Node{nodeLt, "lt", lhs, rhs, 0}
+		} else if next := consume(tokens, pos, tkLe); next > pos {
+			rhs, pos = add(tokens, next)
+			lhs = &Node{nodeLe, "le", lhs, rhs, 0}
+		} else if next := consume(tokens, pos, '>'); next > pos {
+			rhs, pos = add(tokens, next)
+			lhs = &Node{nodeLt, "lt", rhs, lhs, 0} // swap 'rhs' & 'lhs'
+		} else if next := consume(tokens, pos, tkGe); next > pos {
+			rhs, pos = add(tokens, next)
+			lhs = &Node{nodeLe, "le", rhs, lhs, 0} // swap 'rhs' & 'lhs'
+		} else {
+			break
+		}
+	}
+
+	return lhs, pos
 }
 
 // equality = relational ("==" relational | "!=" relational)*
 func equality(tokens []*Token, pos int) (*Node, int) {
-	node, pos := relational(tokens, pos)
+	lhs, pos := relational(tokens, pos)
 
 	var rhs *Node
 
 	for {
 		if next := consume(tokens, pos, tkEq); next > pos {
 			rhs, pos = relational(tokens, next)
-			node = &Node{nodeEq, "eq", node, rhs, 0}
+			lhs = &Node{nodeEq, "eq", lhs, rhs, 0}
 		} else if next := consume(tokens, pos, tkNe); next > pos {
 			rhs, pos = relational(tokens, next)
-			node = &Node{nodeNe, "ne", node, rhs, 0}
+			lhs = &Node{nodeNe, "ne", lhs, rhs, 0}
 		} else {
 			break
 		}
 	}
 
-	return node, pos
+	return lhs, pos
 }
 
 // expr = equality
